@@ -12,18 +12,23 @@ const savetoLocalStorage = () => {
   localStorage.setItem('feedback-form-state', JSON.stringify(formData));
 };
 
-const uploadForm = () => {
+const saveForm = () => {
   const savedData = localStorage.getItem('feedback-form-state');
   if (savedData) {
     const { email, message } = JSON.parse(savedData);
     emailInput.value = email;
-    messageInput.value = message;
+    messageInput = message;
     formData.email = email;
     formData.message = message;
   }
 };
+document.addEventListener('DOMContentLoaded', saveForm);
 
-document.addEventListener('DOMContentLoaded', uploadForm);
+form.addEventListener('input', event => {
+  const { name, value } = event.target;
+  formData[name] = value;
+  savetoLocalStorage();
+});
 
 form.addEventListener('submit', event => {
   event.preventDefault();
@@ -33,5 +38,7 @@ form.addEventListener('submit', event => {
   }
   console.log('Form data:', formData);
   localStorage.removeItem('feedback-form-state');
-  (formData.email = ''), (formData.message = ''), form.reset();
+  formData.email = '';
+  formData.message = '';
+  form.reset();
 });
