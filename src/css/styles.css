@@ -23,19 +23,3 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
-
-.gallery {
-  list-style-type: none;
-  display: flex;
-  flex-wrap: wrap;
-}
-.gallery-item {
-  margin: 10px;
-}
-.gallery-link {
-  text-decoration: none;
-}
-.gallery-image {
-  width: 360px;
-  height: 300px;
-}

@@ -1,44 +1,69 @@
-const formData = {
-  email: '',
-  message: '',
-};
+const STORAGE_KEY = 'feedback-msg';
 
 const form = document.querySelector('.feedback-form');
-const emailInput = form.querySelector('input[name = "email"]');
+const textarea = form.querySelector('textarea');
+const input = form.querySelector('input');
+const textarea2 = document.querySelector('textarea');
 
-const messageInput = form.querySelector('textarea[name = "message"]');
 
-const savetoLocalStorage = () => {
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
-};
+form.addEventListener('input', () => {
+    const formData = new FormData(form);
+    const email = formData.get('email');
+    const message = formData.get('message');
+    const data = { email, message }; 
 
-const saveForm = () => {
-  const savedData = localStorage.getItem('feedback-form-state');
-  if (savedData) {
-    const { email, message } = JSON.parse(savedData);
-    emailInput.value = email;
-    messageInput = message;
-    formData.email = email;
-    formData.message = message;
-  }
-};
-document.addEventListener('DOMContentLoaded', saveForm);
+    saveToLS('email', email);
+    saveToLS('message', message);
+    saveToLS('userData', data);
+}); 
 
-form.addEventListener('input', event => {
-  const { name, value } = event.target;
-  formData[name] = value;
-  savetoLocalStorage();
+function saveToLS(key, value) {
+    const jsonData = JSON.stringify(value);
+    localStorage.setItem(key, jsonData);
+}
+
+function loadFromLS(key) {
+    const json = localStorage.getItem(key);
+    try {
+        const data = JSON.parse(json);
+        return data;
+    } catch {
+        return json;
+    }
+}  
+
+function validateForm() {
+    if (textarea2.value === '' || input.value === '' ) {
+        return false;
+    } else {
+        return true;
+    }
+    
+}
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const email = formData.get('email');
+    const message = formData.get('message');
+    const data = { email, message }; 
+
+    console.log(data);
+
+    form.reset();
+    localStorage.removeItem('email');
+    localStorage.removeItem('message');
+    localStorage.removeItem('userData');
+
+    if (!validateForm()) {
+        e.preventDefault();
+    }
 });
 
-form.addEventListener('submit', event => {
-  event.preventDefault();
-  if (!formData.email || !formData.message) {
-    alert('Fill please all fields');
-    return;
-  }
-  console.log('Form data:', formData);
-  localStorage.removeItem('feedback-form-state');
-  formData.email = '';
-  formData.message = '';
-  form.reset();
+window.addEventListener('DOMContentLoaded', () => {
+    const email = loadFromLS('email');
+    const message = loadFromLS('message');
+
+    form.elements.email.value = email;
+    form.elements.message.value = message;
 });
